@@ -63,39 +63,39 @@ const HelpCenter: React.FC = () => {
   };
 
   const handleSearch = async () => {
-    if (!searchTerm.trim()) {
-      fetchCards();
-      return;
-    }
+  if (!searchTerm.trim()) {
+    fetchCards();
+    return;
+  }
 
-    setIsLoading(true);
-    setError(null);
-    try {
-      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/cards/${searchTerm}`);
-      if (!response.ok) {
-        if (response.status === 404) {
-          setCards([]);
-          toast({
-            title: "No results",
-            description: "No matching cards found.",
-          });
-          return;
-        }
-        throw new Error('Search failed');
+  setIsLoading(true);
+  setError(null);
+  try {
+    const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/cards/${searchTerm}`);
+    if (!response.ok) {
+      if (response.status === 404) {
+        setCards([]);
+        toast({
+          title: "No results",
+          description: "No matching cards found.",
+        });
+        return;
       }
-      const data: CardData = await response.json();
-      setCards([data]);
-    } catch (error) {
-      setError('Error searching cards. Please try again.');
-      toast({
-        title: "Error",
-        description: "Search operation failed.",
-        variant: "destructive",
-      });
-    } finally {
-      setIsLoading(false);
+      throw new Error('Search failed');
     }
-  };
+    const data: CardData[] = await response.json();
+    setCards(data);
+  } catch (error) {
+    setError('Error searching cards. Please try again.');
+    toast({
+      title: "Error",
+      description: "Search operation failed.",
+      variant: "destructive",
+    });
+  } finally {
+    setIsLoading(false);
+  }
+};
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSearchTerm(e.target.value);
