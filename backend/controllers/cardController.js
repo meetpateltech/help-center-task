@@ -27,11 +27,14 @@ exports.getAllCards = async (req, res, next) => {
 
 exports.getCardByTitle = async (req, res, next) => {
   try {
-    const card = await Card.findOne({ title: req.params.title }).collation({ locale: 'en', strength: 2 });
-    if (!card) {
-      return res.status(404).json({ message: 'Card not found' });
+    const title = req.params.title;
+    const cards = await Card.find({ title: { $regex: new RegExp(title, 'i') } });
+    
+    if (cards.length === 0) {
+      return res.status(404).json({ message: 'No cards found matching the title' });
     }
-    res.json(card);
+    
+    res.json(cards);
   } catch (error) {
     next(error);
   }
